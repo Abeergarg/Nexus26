@@ -1,0 +1,81 @@
+{
+  "stadium_name": "MetLife Stadium Virtual (FIFA World Cup 2026 Edition)",
+  "nodes": [
+    { "id": "Gate_A", "label": "Entrance Gate A (North)", "type": "gate", "x": 400, "y": 80, "accessible": true },
+    { "id": "Gate_B", "label": "Entrance Gate B (East)", "type": "gate", "x": 720, "y": 400, "accessible": true },
+    { "id": "Gate_C", "label": "Entrance Gate C (South)", "type": "gate", "x": 400, "y": 720, "accessible": true },
+    { "id": "Gate_D", "label": "Entrance Gate D (West)", "type": "gate", "x": 80, "y": 400, "accessible": true },
+    
+    { "id": "Section_101", "label": "Lower Tier Section 101", "type": "section", "x": 280, "y": 280, "accessible": true },
+    { "id": "Section_102", "label": "Lower Tier Section 102", "type": "section", "x": 520, "y": 280, "accessible": true },
+    { "id": "Section_103", "label": "Lower Tier Section 103", "type": "section", "x": 520, "y": 520, "accessible": true },
+    { "id": "Section_104", "label": "Lower Tier Section 104", "type": "section", "x": 280, "y": 520, "accessible": true },
+    
+    { "id": "Section_201", "label": "Upper Tier Section 201", "type": "section", "x": 200, "y": 200, "accessible": false },
+    { "id": "Section_202", "label": "Upper Tier Section 202", "type": "section", "x": 600, "y": 200, "accessible": false },
+    { "id": "Section_203", "label": "Upper Tier Section 203", "type": "section", "x": 600, "y": 600, "accessible": false },
+    { "id": "Section_204", "label": "Upper Tier Section 204", "type": "section", "x": 200, "y": 600, "accessible": false },
+    
+    { "id": "Food_Court_1", "label": "Main Concourse Dining (North)", "type": "food", "x": 400, "y": 220, "accessible": true },
+    { "id": "First_Aid_1", "label": "Medical Emergency Center (South)", "type": "first_aid", "x": 400, "y": 580, "accessible": true },
+    { "id": "Restrooms_1", "label": "Restrooms Block A (West)", "type": "restroom", "x": 220, "y": 400, "accessible": true },
+    { "id": "Restrooms_2", "label": "Restrooms Block B (East)", "type": "restroom", "x": 580, "y": 400, "accessible": true },
+    
+    { "id": "Stairs_North", "label": "North Stairwell (Access 201/202)", "type": "stairs", "x": 400, "y": 150, "accessible": false },
+    { "id": "Ramp_South", "label": "South Accessibility Ramp", "type": "ramp", "x": 400, "y": 650, "accessible": true },
+    { "id": "Elevator_West", "label": "Elevator Block West", "type": "elevator", "x": 140, "y": 400, "accessible": true },
+    { "id": "Elevator_East", "label": "Elevator Block East", "type": "elevator", "x": 660, "y": 400, "accessible": true },
+    
+    { "id": "Metro_Station", "label": "NJ Transit Metro Station", "type": "transit", "x": 400, "y": 20, "accessible": true },
+    { "id": "Bus_Terminal", "label": "Park & Ride Bus Terminal", "type": "transit", "x": 400, "y": 780, "accessible": true },
+    { "id": "Eco_Bike_Share", "label": "Eco-Friendly Micro-Mobility Zone", "type": "transit", "x": 30, "y": 400, "accessible": true }
+  ],
+  "edges": [
+    { "source": "Gate_A", "target": "Metro_Station", "distance": 60, "stairs": false, "density": 0.2, "green_factor": 0.8 },
+    { "source": "Gate_A", "target": "Food_Court_1", "distance": 140, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Gate_A", "target": "Stairs_North", "distance": 70, "stairs": false, "density": 0.3, "green_factor": 1.0 },
+    
+    { "source": "Stairs_North", "target": "Section_201", "distance": 80, "stairs": true, "density": 0.4, "green_factor": 1.0 },
+    { "source": "Stairs_North", "target": "Section_202", "distance": 80, "stairs": true, "density": 0.4, "green_factor": 1.0 },
+    { "source": "Stairs_North", "target": "Food_Court_1", "distance": 70, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    
+    { "source": "Gate_D", "target": "Restrooms_1", "distance": 140, "stairs": false, "density": 0.15, "green_factor": 1.0 },
+    { "source": "Gate_D", "target": "Elevator_West", "distance": 60, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Gate_D", "target": "Eco_Bike_Share", "distance": 50, "stairs": false, "density": 0.05, "green_factor": 0.95 },
+    
+    { "source": "Elevator_West", "target": "Section_201", "distance": 210, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    { "source": "Elevator_West", "target": "Section_204", "distance": 210, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    { "source": "Elevator_West", "target": "Section_101", "distance": 150, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Elevator_West", "target": "Section_104", "distance": 150, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Elevator_West", "target": "Restrooms_1", "distance": 80, "stairs": false, "density": 0.15, "green_factor": 1.0 },
+    
+    { "source": "Section_101", "target": "Food_Court_1", "distance": 130, "stairs": false, "density": 0.25, "green_factor": 1.0 },
+    { "source": "Section_102", "target": "Food_Court_1", "distance": 130, "stairs": false, "density": 0.25, "green_factor": 1.0 },
+    
+    { "source": "Section_101", "target": "Restrooms_1", "distance": 130, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    { "source": "Section_104", "target": "Restrooms_1", "distance": 130, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    
+    { "source": "Gate_B", "target": "Restrooms_2", "distance": 140, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    { "source": "Gate_B", "target": "Elevator_East", "distance": 60, "stairs": false, "density": 0.15, "green_factor": 1.0 },
+    
+    { "source": "Elevator_East", "target": "Section_202", "distance": 210, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    { "source": "Elevator_East", "target": "Section_203", "distance": 210, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    { "source": "Elevator_East", "target": "Section_102", "distance": 150, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Elevator_East", "target": "Section_103", "distance": 150, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Elevator_East", "target": "Restrooms_2", "distance": 80, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    
+    { "source": "Section_102", "target": "Restrooms_2", "distance": 130, "stairs": false, "density": 0.25, "green_factor": 1.0 },
+    { "source": "Section_103", "target": "Restrooms_2", "distance": 130, "stairs": false, "density": 0.25, "green_factor": 1.0 },
+    
+    { "source": "Gate_C", "target": "Bus_Terminal", "distance": 60, "stairs": false, "density": 0.3, "green_factor": 0.6 },
+    { "source": "Gate_C", "target": "First_Aid_1", "distance": 140, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Gate_C", "target": "Ramp_South", "distance": 70, "stairs": false, "density": 0.2, "green_factor": 1.0 },
+    
+    { "source": "Ramp_South", "target": "Section_203", "distance": 220, "stairs": false, "density": 0.15, "green_factor": 1.0 },
+    { "source": "Ramp_South", "target": "Section_204", "distance": 220, "stairs": false, "density": 0.15, "green_factor": 1.0 },
+    { "source": "Ramp_South", "target": "First_Aid_1", "distance": 70, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    
+    { "source": "Section_103", "target": "First_Aid_1", "distance": 130, "stairs": false, "density": 0.1, "green_factor": 1.0 },
+    { "source": "Section_104", "target": "First_Aid_1", "distance": 130, "stairs": false, "density": 0.1, "green_factor": 1.0 }
+  ]
+}

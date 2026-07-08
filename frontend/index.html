@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus26: Intelligent Stadium Operations Core</title>
+    <!-- Google Fonts: Outfit (headlines) and Inter (body) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+
+    <header class="dashboard-header">
+        <div class="header-logo">
+            <span class="logo-accent">NEXUS</span>26
+            <span class="badge">VIRTUAL EDITION</span>
+        </div>
+        <div class="venue-info">
+            <span class="label">VENUE:</span>
+            <span class="value">MetLife Stadium (FIFA 2026)</span>
+        </div>
+        <div class="header-clock" id="live-clock">00:00:00 UTC</div>
+    </header>
+
+    <main class="dashboard-grid">
+        <!-- LEFT COLUMN: Live Operations & Resource Forecasting -->
+        <section class="panel glass-panel left-panel">
+            <div class="panel-header">
+                <h2>OPERATIONAL INTELLIGENCE</h2>
+                <span class="status-indicator live">LIVE</span>
+            </div>
+            
+            <!-- Live Weather Metrics -->
+            <div class="metric-group">
+                <h3>Ambient Conditions</h3>
+                <div class="metric-row">
+                    <div class="metric-card">
+                        <div class="metric-label">Temp</div>
+                        <div class="metric-value" id="val-temp">--°C</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Humidity</div>
+                        <div class="metric-value" id="val-humidity">--%</div>
+                    </div>
+                    <div class="metric-card alert-card" id="heat-index-card">
+                        <div class="metric-label">Heat Index</div>
+                        <div class="metric-value" id="val-heat-index">--°C</div>
+                    </div>
+                </div>
+                <div class="danger-level-alert" id="val-danger-level">
+                    Monitoring ambient heat risk levels...
+                </div>
+            </div>
+
+            <!-- Resource Projections -->
+            <div class="metric-group">
+                <h3>Supply Projections & Depletion</h3>
+                
+                <div class="progress-container">
+                    <div class="progress-labels">
+                        <span>Water Reserves</span>
+                        <span id="txt-water-depletion">--% depleted</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="bar-water" style="width: 0%"></div>
+                    </div>
+                    <div class="time-left">Time to depletion: <span id="time-water">-- hrs</span></div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-labels">
+                        <span>Ice Inventories</span>
+                        <span id="txt-ice-depletion">--% depleted</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="bar-ice" style="width: 0%"></div>
+                    </div>
+                    <div class="time-left">Time to depletion: <span id="time-ice">-- hrs</span></div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-labels">
+                        <span>Medical Supply Kits</span>
+                        <span id="txt-medical-depletion">--% depleted</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="bar-medical" style="width: 0%"></div>
+                    </div>
+                    <div class="time-left">Time to depletion: <span id="time-medical">-- hrs</span></div>
+                </div>
+
+                <div class="replenish-action">
+                    <button class="btn btn-secondary btn-full" id="btn-replenish">Replenish All Reserves</button>
+                </div>
+            </div>
+
+            <!-- Dispatch Alerts -->
+            <div class="metric-group">
+                <h3>Auto-Scheduled Supply Dispatches</h3>
+                <div class="dispatch-logs" id="dispatch-logs-container">
+                    <div class="empty-state">No active logistics dispatch schedules.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CENTER COLUMN: Dynamic SVG Stadium Map -->
+        <section class="panel map-panel">
+            <div class="panel-header">
+                <h2>REAL-TIME VENUE OCCUPANCY & DENSITY GRAPH</h2>
+                <div class="map-legend">
+                    <span class="legend-item"><span class="color-dot green"></span>Low</span>
+                    <span class="legend-item"><span class="color-dot yellow"></span>Medium</span>
+                    <span class="legend-item"><span class="color-dot red"></span>Congested</span>
+                </div>
+            </div>
+            <div class="map-viewport" id="map-viewport">
+                <!-- SVG map will be rendered dynamically by app.js -->
+            </div>
+            <div class="map-instruction">
+                Click nodes directly to set Start (1st click) and Destination (2nd click) points.
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: Wayfinding & Translation Simulator -->
+        <section class="panel glass-panel right-panel">
+            <div class="panel-header">
+                <h2>AGENTIC WAYFINDING ASSISTANT</h2>
+                <div class="cache-telemetry">
+                    <span>Cache Hit Ratio:</span>
+                    <span class="value" id="val-cache-ratio">0%</span>
+                </div>
+            </div>
+
+            <!-- Query Simulator Input -->
+            <form class="wayfinding-form" id="wayfinding-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="select-start">Start Node</label>
+                        <select id="select-start" required>
+                            <option value="">Select Location</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="select-end">Destination</label>
+                        <select id="select-end" required>
+                            <option value="">Select Location</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="select-profile">User Profile</label>
+                        <select id="select-profile">
+                            <option value="standard">Standard Fan Profile</option>
+                            <option value="mobility_impaired">Mobility Impaired (Stairs-Free)</option>
+                            <option value="green">Eco-Friendly (Green Transit)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="select-lang">Language</label>
+                        <select id="select-lang">
+                            <option value="en">English (US)</option>
+                            <option value="es">Español (ES)</option>
+                            <option value="fr">Français (FR)</option>
+                            <option value="ar">العربية (AR)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-query">Natural Language Query (Simulate Chat / PII Scrubbing)</label>
+                    <textarea id="input-query" placeholder="e.g. My name is John Doe (john@gmail.com). Show me the way to Section 101, avoiding stairs."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Generate Agent Route</button>
+            </form>
+
+            <!-- Navigation & Security Output -->
+            <div class="wayfinding-output" id="wayfinding-output" style="display: none;">
+                <!-- Security Redaction Stats -->
+                <div class="scrub-report" id="scrub-report">
+                    <div class="scrub-title">PII Scrubbing Gateway (Privacy Guard)</div>
+                    <div class="scrubbed-text" id="scrubbed-text">--</div>
+                    <div class="scrub-metrics" id="scrub-metrics">
+                        <span>Redacted:</span>
+                        <span class="badge" id="scrub-names">0 Names</span>
+                        <span class="badge" id="scrub-emails">0 Emails</span>
+                        <span class="badge" id="scrub-phones">0 Phones</span>
+                    </div>
+                </div>
+
+                <!-- Cache Performance Metric -->
+                <div class="cache-report" id="cache-report">
+                    <div class="cache-badge" id="cache-badge">CACHE MISS</div>
+                    <div>Query Similarity: <span id="cache-similarity">--</span></div>
+                    <div>Latency: <span id="cache-latency">-- ms</span></div>
+                </div>
+
+                <!-- Navigation Details -->
+                <div class="navigation-details">
+                    <div class="nav-header-row">
+                        <span class="profile-tag" id="route-profile">Standard Route</span>
+                        <span class="carbon-tag" id="route-carbon">0g CO2</span>
+                    </div>
+                    <div class="nav-stats">
+                        <div>Distance: <strong id="route-dist">0m</strong></div>
+                        <div>Estimated Time: <strong id="route-time">0 mins</strong></div>
+                    </div>
+                    
+                    <div class="nav-steps">
+                        <h4>Step-by-Step Directions</h4>
+                        <ol id="route-steps-list">
+                            <li>--</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="output-placeholder" id="output-placeholder">
+                Enter your start, end locations, and query text to visualize routing decisions.
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER: Telemetry JSON Event Stream Log -->
+    <footer class="dashboard-footer">
+        <div class="footer-title">
+            <span>REAL-TIME TELEMETRY HARDWARE DATA INGESTION SIMULATOR</span>
+            <span class="pulse-dot"></span>
+        </div>
+        <div class="telemetry-logs" id="telemetry-logs">
+            <div class="log-line system">[SYSTEM] Awaiting live telemetry inputs from FastAPI core background loop...</div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

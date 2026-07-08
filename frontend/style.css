@@ -861,3 +861,149 @@ select:focus, textarea:focus {
         order: -1;
     }
 }
+
+/* ==========================================================================
+   WCAG 2.1 AA Accessibility Enhancements
+   ========================================================================== */
+
+/* Screen-reader only utility — visually hidden but accessible to AT */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Skip navigation link — visible only on keyboard focus */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 10000;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary-color);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: var(--border-radius-pill);
+    text-decoration: none;
+    transition: top 0.15s ease;
+}
+.skip-link:focus {
+    top: 1rem;
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* High-visibility focus rings for all interactive elements (WCAG 2.4.7 / 2.4.11) */
+:focus-visible {
+    outline: 3px solid #60a5fa;
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Remove default outline only when :focus-visible is supported */
+:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Minimum 44×44px touch target for buttons and selects (WCAG 2.5.5) */
+button,
+select,
+textarea,
+input[type="text"],
+input[type="number"] {
+    min-height: 44px;
+}
+
+/* ==========================================================================
+   Reduced Motion — respects OS-level "prefers-reduced-motion: reduce"
+   Suppresses all animations and transitions for users who need it.
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .glass-bg,
+    .pulse-dot {
+        animation: none !important;
+    }
+
+    .progress-fill {
+        transition: none !important;
+    }
+}
+
+/* ==========================================================================
+   High Contrast Mode — Windows "Increase Contrast" / forced-colors
+   ========================================================================== */
+@media (forced-colors: active) {
+    .btn {
+        border: 2px solid ButtonText;
+        color: ButtonText;
+        background: ButtonFace;
+        forced-color-adjust: none;
+    }
+
+    .btn:focus-visible {
+        outline: 3px solid Highlight;
+    }
+
+    .progress-bar {
+        border: 1px solid ButtonText;
+    }
+
+    .progress-fill {
+        background: Highlight;
+        forced-color-adjust: none;
+    }
+
+    .metric-card {
+        border: 1px solid ButtonText;
+    }
+
+    .status-indicator.live {
+        border: 1px solid ButtonText;
+        background: transparent;
+        color: ButtonText;
+    }
+
+    .skip-link {
+        background: Highlight;
+        color: HighlightText;
+        forced-color-adjust: none;
+    }
+}
+
+/* ==========================================================================
+   High Contrast preference (non-forced — prefers-contrast: more)
+   ========================================================================== */
+@media (prefers-contrast: more) {
+    :root {
+        --text-secondary: #d0d0d0;
+        --text-muted: #909090;
+        --border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .metric-label {
+        color: #c8c8c8;
+    }
+
+    .status-indicator.live {
+        background: #ff5c00;
+        color: #000000;
+    }
+}
+

@@ -1,0 +1,18 @@
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["tests/*", "**/__pycache__/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 75
+
+[tool.bandit]
+exclude_dirs = ["tests"]
+skips = ["B101"]

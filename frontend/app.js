@@ -5,6 +5,36 @@ let startNodeId = null;
 let endNodeId = null;
 let cacheHitHistory = [];
 
+// Interval handles for cleanup on page hide (prevent memory leaks)
+let forecastIntervalId = null;
+let cacheIntervalId = null;
+
+// ---------------------------------------------------------------------------
+// DOM Sanitization — prevents XSS when inserting API data into the DOM.
+// Only call this before setting textContent; use createTextNode for raw strings.
+// For HTML strings built from API data, strip all tags.
+// ---------------------------------------------------------------------------
+function sanitizeText(value) {
+    if (typeof value !== "string") value = String(value);
+    // Remove any HTML tags; return plain text only
+    const div = document.createElement("div");
+    div.textContent = value;
+    return div.textContent;
+}
+
+// ---------------------------------------------------------------------------
+// Live Region Announcer — informs screen readers of important state changes
+// ---------------------------------------------------------------------------
+function announceToScreenReader(message) {
+    const region = document.getElementById("sr-live-region");
+    if (!region) return;
+    // Reset then set to trigger re-announcement
+    region.textContent = "";
+    requestAnimationFrame(() => {
+        region.textContent = sanitizeText(message);
+    });
+}
+
 // --- Initialization ---
 document.addEventListener("DOMContentLoaded", () => {
     // 1. Fetch Topology & Render SVG Map
@@ -12,8 +42,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. Poll Operations Forecast & Cache Metrics
     pollOperationsForecast();
-    setInterval(pollOperationsForecast, 4000);
-    setInterval(pollCacheStats, 4000);
+    forecastIntervalId = setInterval(pollOperationsForecast, 4000);
+    cacheIntervalId = setInterval(pollCacheStats, 4000);
 
     // 3. Setup Clock
     setupClock();
@@ -28,6 +58,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     document.getElementById("select-end").addEventListener("change", (e) => {
         setEndNode(e.target.value, false);
+    });
+
+    // 6. Pause polling when page is hidden (memory leak prevention)
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            clearInterval(forecastIntervalId);
+            clearInterval(cacheIntervalId);
+        } else {
+            pollOperationsForecast();
+            forecastIntervalId = setInterval(pollOperationsForecast, 4000);
+            cacheIntervalId = setInterval(pollCacheStats, 4000);
+        }
     });
 });
 
@@ -351,7 +393,7 @@ async function handleWayfindingSubmit(e) {
 
         if (!response.ok) {
             const errBody = await response.json();
-            throw new Error(errBody.detail || "Routing request failed");
+            throw new Error(errBody.error?.message || errBody.detail || "Routing request failed");
         }
 
         const data = await response.json();
@@ -361,11 +403,11 @@ async function handleWayfindingSubmit(e) {
         const outputPanel = document.getElementById("wayfinding-output");
         outputPanel.style.display = "flex";
 
-        // 1. Populate PII Scrubbing Layer Logs
-        document.getElementById("scrubbed-text").textContent = `"${data.scrubbed_query}"`;
-        document.getElementById("scrub-names").textContent = `${data.scrub_stats.names} Names`;
-        document.getElementById("scrub-emails").textContent = `${data.scrub_stats.emails} Emails`;
-        document.getElementById("scrub-phones").textContent = `${data.scrub_stats.phones} Phones`;
+        // 1. Populate PII Scrubbing Layer Logs (sanitized — API data)
+        document.getElementById("scrubbed-text").textContent = `"${sanitizeText(data.scrubbed_query)}"`;
+        document.getElementById("scrub-names").textContent = `${sanitizeText(String(data.scrub_stats.names))} Names`;
+        document.getElementById("scrub-emails").textContent = `${sanitizeText(String(data.scrub_stats.emails))} Emails`;
+        document.getElementById("scrub-phones").textContent = `${sanitizeText(String(data.scrub_stats.phones))} Phones`;
 
         // 2. Cache Match Stats
         const cacheBadge = document.getElementById("cache-badge");
@@ -379,29 +421,47 @@ async function handleWayfindingSubmit(e) {
         document.getElementById("cache-similarity").textContent = `${(data.similarity_score * 100).toFixed(1)}%`;
         document.getElementById("cache-latency").textContent = data.latency_ms.toFixed(1);
 
-        // 3. Navigation summary metrics
-        document.getElementById("route-profile").textContent = data.profile_label;
-        document.getElementById("route-carbon").textContent = `${data.estimated_carbon_grams}g CO2`;
-        document.getElementById("route-dist").textContent = `${data.total_distance_meters}m`;
-        document.getElementById("route-time").textContent = `${data.total_time_minutes} mins`;
+        // 3. Navigation summary metrics (sanitized)
+        document.getElementById("route-profile").textContent = sanitizeText(data.profile_label);
+        document.getElementById("route-carbon").textContent = `${sanitizeText(String(data.estimated_carbon_grams))}g CO2`;
+        document.getElementById("route-dist").textContent = `${sanitizeText(String(data.total_distance_meters))}m`;
+        document.getElementById("route-time").textContent = `${sanitizeText(String(data.total_time_minutes))} mins`;
 
-        // 4. Instructions
+        // 4. Instructions (sanitized — API step strings)
         const stepsList = document.getElementById("route-steps-list");
         stepsList.innerHTML = "";
-        data.steps.forEach(step => {
+        (data.steps || []).forEach(step => {
             const li = document.createElement("li");
-            li.textContent = step;
+            li.textContent = sanitizeText(step);  // textContent = XSS-safe
             stepsList.appendChild(li);
         });
 
         // 5. Draw path layout on stadium map
         drawRouteOverlay(data.path);
         
-        appendTelemetryLog(`Routed ${start} to ${end} via '${profile}' [CacheHit: ${data.cache_hit}]`, "system");
+        // 6. Announce to screen readers
+        announceToScreenReader(
+            `Route calculated: ${sanitizeText(data.profile_label)}, ` +
+            `${data.total_distance_meters}m, ${data.total_time_minutes} minutes, ` +
+            `${data.steps.length} steps.`
+        );
+        
+        appendTelemetryLog(`Routed ${sanitizeText(start)} to ${sanitizeText(end)} via '${sanitizeText(profile)}' [CacheHit: ${data.cache_hit}]`, "system");
 
     } catch (err) {
         console.error(err);
-        alert(`Routing failed: ${err.message}`);
+        announceToScreenReader(`Routing failed: ${err.message}`);
+        const placeholder = document.getElementById("output-placeholder");
+        placeholder.style.display = "block";
+        placeholder.textContent = `Routing failed: ${sanitizeText(err.message)}. Please check your selection and try again.`;
+    } finally {
+        // Always re-enable submit button
+        const submitBtn = document.getElementById("btn-submit-route");
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.setAttribute("aria-busy", "false");
+            submitBtn.textContent = "Generate Agent Route";
+        }
     }
 }
 
@@ -441,23 +501,30 @@ async function pollOperationsForecast() {
         updateProgressBar("ice", data.depletion_percentages.ice, data.remaining_time_hours.ice);
         updateProgressBar("medical", data.depletion_percentages.medical, data.remaining_time_hours.medical);
 
-        // 3. Render Logistics Dispatches
+        // 3. Render Logistics Dispatches (sanitized — no innerHTML with API data)
         const logContainer = document.getElementById("dispatch-logs-container");
         logContainer.innerHTML = "";
         
         if (data.dispatch_actions.length === 0) {
-            logContainer.innerHTML = '<div class="empty-state">No active logistics dispatch schedules. Ambient temperature is safe.</div>';
+            const emptyDiv = document.createElement("div");
+            emptyDiv.className = "empty-state";
+            emptyDiv.textContent = "No active logistics dispatch schedules. Ambient temperature is safe.";
+            logContainer.appendChild(emptyDiv);
         } else {
             data.dispatch_actions.forEach(act => {
                 const card = document.createElement("div");
-                card.className = "dispatch-card";
-                if (act.action === "DISPATCH_WATER_TRUCK") {
-                    card.className = "dispatch-card critical";
-                }
-                card.innerHTML = `
-                    <div class="dispatch-title">${act.action.replace(/_/g, " ")}</div>
-                    <div class="dispatch-meta">Target: ${act.target_zone} | Load: ${act.quantity} ${act.unit} | Team: ${act.volunteer_group}</div>
-                `;
+                card.className = act.action === "DISPATCH_WATER_TRUCK" ? "dispatch-card critical" : "dispatch-card";
+
+                const title = document.createElement("div");
+                title.className = "dispatch-title";
+                title.textContent = sanitizeText(act.action.replace(/_/g, " "));
+
+                const meta = document.createElement("div");
+                meta.className = "dispatch-meta";
+                meta.textContent = `Target: ${sanitizeText(act.target_zone)} | Load: ${sanitizeText(String(act.quantity))} ${sanitizeText(act.unit)} | Team: ${sanitizeText(act.volunteer_group)}`;
+
+                card.appendChild(title);
+                card.appendChild(meta);
                 logContainer.appendChild(card);
             });
         }
@@ -472,12 +539,19 @@ async function pollOperationsForecast() {
 
 function updateProgressBar(key, depletionPct, hrsLeft) {
     const bar = document.getElementById(`bar-${key}`);
+    const progressBarEl = bar ? bar.parentElement : null;
     const text = document.getElementById(`txt-${key}-depletion`);
     const timeText = document.getElementById(`time-${key}`);
 
-    bar.style.width = `${100 - depletionPct}%`;
+    const fillPct = 100 - depletionPct;
+    bar.style.width = `${fillPct}%`;
     text.textContent = `${depletionPct.toFixed(1)}% depleted`;
     timeText.textContent = hrsLeft < 999 ? `${hrsLeft.toFixed(1)} hrs` : "99+ hrs";
+
+    // Update aria-valuenow for progressbar role (WCAG 4.1.2)
+    if (progressBarEl && progressBarEl.hasAttribute("role")) {
+        progressBarEl.setAttribute("aria-valuenow", Math.round(fillPct));
+    }
 
     // Set bar alerts
     if (depletionPct >= 80.0) {

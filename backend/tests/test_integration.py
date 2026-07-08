@@ -16,7 +16,10 @@ client = TestClient(app)
 def test_api_root_endpoint():
     response = client.get("/")
     assert response.status_code == 200
-    assert response.json()["status"] == "OPERATIONAL"
+    data = response.json()
+    assert data["status"] == "OPERATIONAL"
+    assert "version" in data
+    assert data["version"] == "2.1.0"
 
 
 def test_api_topology_retrieval():
@@ -44,6 +47,19 @@ def test_api_route_calculation():
     assert "steps" in data
 
 
+def test_api_route_same_start_end_rejected():
+    """Guard: start == end should return 400."""
+    payload = {
+        "start": "Section_101",
+        "end": "Section_101",
+        "profile": "standard",
+        "query_text": "",
+        "language": "en",
+    }
+    response = client.post("/api/navigation/route", json=payload)
+    assert response.status_code == 400
+
+
 def test_api_validation_error_handling():
     """
     Verifies that type-safe validation boundary violations (density = 1.5, which violates pydantic le=1.0)
@@ -65,6 +81,37 @@ def test_api_validation_error_handling():
     assert data["error"]["code"] == "INPUT_VALIDATION_ERROR"
     assert "details" in data["error"]
     assert any(x["field"] == "events -> 0 -> density" for x in data["error"]["details"])
+
+
+def test_api_validation_error_includes_request_id():
+    """Validation error responses must include a request_id field."""
+    payload = {"events": [{"source": "A", "target": "B", "density": 2.0}]}
+    response = client.post("/api/telemetry/simulate", json=payload)
+    assert response.status_code == 422
+    data = response.json()
+    assert "request_id" in data
+
+
+def test_api_response_includes_request_id_header():
+    """Every response must include the X-Request-ID header."""
+    response = client.get("/api/telemetry/topology")
+    assert "x-request-id" in response.headers
+
+
+def test_health_live_endpoint():
+    """Liveness probe must return 200."""
+    response = client.get("/health/live")
+    assert response.status_code == 200
+    assert response.json()["status"] == "alive"
+
+
+def test_health_ready_endpoint():
+    """Readiness probe must return 200 or 503 with correct schema."""
+    response = client.get("/health/ready")
+    assert response.status_code in (200, 503)
+    data = response.json()
+    assert "status" in data
+    assert "components" in data
 
 
 @pytest.mark.anyio

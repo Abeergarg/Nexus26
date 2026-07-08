@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nexus26: AI-powered real-time stadium operations dashboard for FIFA World Cup 2026. Live crowd routing, heat index forecasting, and resource management.">
     <title>Nexus26: Intelligent Stadium Operations Core</title>
     <!-- Google Fonts: Outfit (headlines) and Inter (body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,227 +12,247 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="glass-bg"></div>
+    <!-- Skip Navigation Link (WCAG 2.4.1) -->
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    <header class="dashboard-header">
-        <div class="header-logo">
-            <span class="logo-accent">NEXUS</span>26
-            <span class="badge">VIRTUAL EDITION</span>
+    <div class="glass-bg" aria-hidden="true"></div>
+
+    <!-- Live region for screen reader announcements -->
+    <div id="sr-live-region" class="sr-only" aria-live="polite" aria-atomic="true" role="status"></div>
+
+    <header class="dashboard-header" role="banner">
+        <div class="header-logo" aria-label="Nexus26 Virtual Edition">
+            <span class="logo-accent" aria-hidden="true">NEXUS</span><span aria-hidden="true">26</span>
+            <span class="badge" aria-label="Edition: Virtual">VIRTUAL EDITION</span>
         </div>
-        <div class="venue-info">
-            <span class="label">VENUE:</span>
+        <div class="venue-info" aria-label="Venue: MetLife Stadium, FIFA 2026">
+            <span class="label" aria-hidden="true">VENUE:</span>
             <span class="value">MetLife Stadium (FIFA 2026)</span>
         </div>
-        <div class="header-clock" id="live-clock">00:00:00 UTC</div>
+        <div class="header-clock" id="live-clock" role="timer" aria-label="Current UTC time" aria-live="off">00:00:00 UTC</div>
     </header>
 
-    <main class="dashboard-grid">
+    <main class="dashboard-grid" id="main-content" role="main">
         <!-- LEFT COLUMN: Live Operations & Resource Forecasting -->
-        <section class="panel glass-panel left-panel">
+        <section class="panel glass-panel left-panel" aria-labelledby="ops-panel-title">
             <div class="panel-header">
-                <h2>OPERATIONAL INTELLIGENCE</h2>
-                <span class="status-indicator live">LIVE</span>
+                <h2 id="ops-panel-title">OPERATIONAL INTELLIGENCE</h2>
+                <span class="status-indicator live" role="status" aria-label="Status: Live">LIVE</span>
             </div>
             
             <!-- Live Weather Metrics -->
-            <div class="metric-group">
-                <h3>Ambient Conditions</h3>
-                <div class="metric-row">
+            <div class="metric-group" aria-labelledby="weather-group-title">
+                <h3 id="weather-group-title">Ambient Conditions</h3>
+                <div class="metric-row" aria-live="polite" aria-atomic="false" role="region" aria-label="Live weather metrics">
                     <div class="metric-card">
-                        <div class="metric-label">Temp</div>
-                        <div class="metric-value" id="val-temp">--°C</div>
+                        <div class="metric-label" id="label-temp">Temp</div>
+                        <div class="metric-value" id="val-temp" aria-labelledby="label-temp" aria-live="polite">--°C</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-label">Humidity</div>
-                        <div class="metric-value" id="val-humidity">--%</div>
+                        <div class="metric-label" id="label-humidity">Humidity</div>
+                        <div class="metric-value" id="val-humidity" aria-labelledby="label-humidity" aria-live="polite">--%</div>
                     </div>
                     <div class="metric-card alert-card" id="heat-index-card">
-                        <div class="metric-label">Heat Index</div>
-                        <div class="metric-value" id="val-heat-index">--°C</div>
+                        <div class="metric-label" id="label-heat-index">Heat Index</div>
+                        <div class="metric-value" id="val-heat-index" aria-labelledby="label-heat-index" aria-live="polite">--°C</div>
                     </div>
                 </div>
-                <div class="danger-level-alert" id="val-danger-level">
+                <div class="danger-level-alert" id="val-danger-level" role="alert" aria-live="assertive">
                     Monitoring ambient heat risk levels...
                 </div>
             </div>
 
             <!-- Resource Projections -->
-            <div class="metric-group">
-                <h3>Supply Projections & Depletion</h3>
+            <div class="metric-group" aria-labelledby="supply-group-title">
+                <h3 id="supply-group-title">Supply Projections &amp; Depletion</h3>
                 
                 <div class="progress-container">
                     <div class="progress-labels">
-                        <span>Water Reserves</span>
-                        <span id="txt-water-depletion">--% depleted</span>
+                        <span id="label-water">Water Reserves</span>
+                        <span id="txt-water-depletion" aria-live="polite" aria-label="Water depletion percentage">--% depleted</span>
                     </div>
-                    <div class="progress-bar">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="label-water" aria-describedby="time-water">
                         <div class="progress-fill" id="bar-water" style="width: 0%"></div>
                     </div>
-                    <div class="time-left">Time to depletion: <span id="time-water">-- hrs</span></div>
+                    <div class="time-left">Time to depletion: <span id="time-water" aria-live="polite">-- hrs</span></div>
                 </div>
 
                 <div class="progress-container">
                     <div class="progress-labels">
-                        <span>Ice Inventories</span>
-                        <span id="txt-ice-depletion">--% depleted</span>
+                        <span id="label-ice">Ice Inventories</span>
+                        <span id="txt-ice-depletion" aria-live="polite" aria-label="Ice depletion percentage">--% depleted</span>
                     </div>
-                    <div class="progress-bar">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="label-ice" aria-describedby="time-ice">
                         <div class="progress-fill" id="bar-ice" style="width: 0%"></div>
                     </div>
-                    <div class="time-left">Time to depletion: <span id="time-ice">-- hrs</span></div>
+                    <div class="time-left">Time to depletion: <span id="time-ice" aria-live="polite">-- hrs</span></div>
                 </div>
 
                 <div class="progress-container">
                     <div class="progress-labels">
-                        <span>Medical Supply Kits</span>
-                        <span id="txt-medical-depletion">--% depleted</span>
+                        <span id="label-medical">Medical Supply Kits</span>
+                        <span id="txt-medical-depletion" aria-live="polite" aria-label="Medical kit depletion percentage">--% depleted</span>
                     </div>
-                    <div class="progress-bar">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="label-medical" aria-describedby="time-medical">
                         <div class="progress-fill" id="bar-medical" style="width: 0%"></div>
                     </div>
-                    <div class="time-left">Time to depletion: <span id="time-medical">-- hrs</span></div>
+                    <div class="time-left">Time to depletion: <span id="time-medical" aria-live="polite">-- hrs</span></div>
                 </div>
 
                 <div class="replenish-action">
-                    <button class="btn btn-secondary btn-full" id="btn-replenish">Replenish All Reserves</button>
+                    <button class="btn btn-secondary btn-full" id="btn-replenish" type="button" aria-describedby="replenish-help">
+                        Replenish All Reserves
+                    </button>
+                    <p id="replenish-help" class="sr-only">Requires Administrator role. Resets all supplies to near-peak capacity.</p>
                 </div>
             </div>
 
             <!-- Dispatch Alerts -->
-            <div class="metric-group">
-                <h3>Auto-Scheduled Supply Dispatches</h3>
-                <div class="dispatch-logs" id="dispatch-logs-container">
+            <div class="metric-group" aria-labelledby="dispatch-group-title">
+                <h3 id="dispatch-group-title">Auto-Scheduled Supply Dispatches</h3>
+                <div class="dispatch-logs" id="dispatch-logs-container" role="log" aria-live="polite" aria-label="Supply dispatch log" aria-relevant="additions">
                     <div class="empty-state">No active logistics dispatch schedules.</div>
                 </div>
             </div>
         </section>
 
         <!-- CENTER COLUMN: Dynamic SVG Stadium Map -->
-        <section class="panel map-panel">
+        <section class="panel map-panel" aria-labelledby="map-panel-title">
             <div class="panel-header">
-                <h2>REAL-TIME VENUE OCCUPANCY & DENSITY GRAPH</h2>
-                <div class="map-legend">
-                    <span class="legend-item"><span class="color-dot green"></span>Low</span>
-                    <span class="legend-item"><span class="color-dot yellow"></span>Medium</span>
-                    <span class="legend-item"><span class="color-dot red"></span>Congested</span>
+                <h2 id="map-panel-title">REAL-TIME VENUE OCCUPANCY &amp; DENSITY GRAPH</h2>
+                <div class="map-legend" role="img" aria-label="Crowd density color legend">
+                    <span class="legend-item"><span class="color-dot green" aria-hidden="true"></span>Low</span>
+                    <span class="legend-item"><span class="color-dot yellow" aria-hidden="true"></span>Medium</span>
+                    <span class="legend-item"><span class="color-dot red" aria-hidden="true"></span>Congested</span>
                 </div>
             </div>
-            <div class="map-viewport" id="map-viewport">
+            <div class="map-viewport" id="map-viewport" role="img" aria-label="Stadium topology map with crowd density heatmap. Click nodes to select start and destination points.">
                 <!-- SVG map will be rendered dynamically by app.js -->
             </div>
-            <div class="map-instruction">
+            <div class="map-instruction" role="note" aria-live="polite" id="map-instruction">
                 Click nodes directly to set Start (1st click) and Destination (2nd click) points.
             </div>
         </section>
 
         <!-- RIGHT COLUMN: Wayfinding & Translation Simulator -->
-        <section class="panel glass-panel right-panel">
+        <section class="panel glass-panel right-panel" aria-labelledby="wayfinding-panel-title">
             <div class="panel-header">
-                <h2>AGENTIC WAYFINDING ASSISTANT</h2>
-                <div class="cache-telemetry">
+                <h2 id="wayfinding-panel-title">AGENTIC WAYFINDING ASSISTANT</h2>
+                <div class="cache-telemetry" aria-label="Cache performance">
                     <span>Cache Hit Ratio:</span>
-                    <span class="value" id="val-cache-ratio">0%</span>
+                    <span class="value" id="val-cache-ratio" aria-live="polite">0%</span>
                 </div>
             </div>
 
             <!-- Query Simulator Input -->
-            <form class="wayfinding-form" id="wayfinding-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="select-start">Start Node</label>
-                        <select id="select-start" required>
-                            <option value="">Select Location</option>
-                        </select>
+            <form class="wayfinding-form" id="wayfinding-form" aria-label="Route planning form" novalidate>
+                <fieldset>
+                    <legend class="sr-only">Route selection</legend>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="select-start">Start Node</label>
+                            <select id="select-start" required aria-required="true" aria-describedby="select-start-hint">
+                                <option value="">Select Location</option>
+                            </select>
+                            <span id="select-start-hint" class="sr-only">Choose your starting location from the stadium map</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="select-end">Destination</label>
+                            <select id="select-end" required aria-required="true" aria-describedby="select-end-hint">
+                                <option value="">Select Location</option>
+                            </select>
+                            <span id="select-end-hint" class="sr-only">Choose your destination location from the stadium map</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="select-end">Destination</label>
-                        <select id="select-end" required>
-                            <option value="">Select Location</option>
-                        </select>
-                    </div>
-                </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="select-profile">User Profile</label>
-                        <select id="select-profile">
-                            <option value="standard">Standard Fan Profile</option>
-                            <option value="mobility_impaired">Mobility Impaired (Stairs-Free)</option>
-                            <option value="green">Eco-Friendly (Green Transit)</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="select-profile">User Profile</label>
+                            <select id="select-profile" aria-describedby="profile-hint">
+                                <option value="standard">Standard Fan Profile</option>
+                                <option value="mobility_impaired">Mobility Impaired (Stairs-Free)</option>
+                                <option value="green">Eco-Friendly (Green Transit)</option>
+                            </select>
+                            <span id="profile-hint" class="sr-only">Select mobility_impaired for a wheelchair-accessible route</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="select-lang">Language</label>
+                            <select id="select-lang" aria-describedby="lang-hint">
+                                <option value="en">English (US)</option>
+                                <option value="es">Español (ES)</option>
+                                <option value="fr">Français (FR)</option>
+                                <option value="ar">العربية (AR)</option>
+                            </select>
+                            <span id="lang-hint" class="sr-only">Choose the language for turn-by-turn navigation steps</span>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="select-lang">Language</label>
-                        <select id="select-lang">
-                            <option value="en">English (US)</option>
-                            <option value="es">Español (ES)</option>
-                            <option value="fr">Français (FR)</option>
-                            <option value="ar">العربية (AR)</option>
-                        </select>
-                    </div>
-                </div>
+                </fieldset>
 
                 <div class="form-group">
-                    <label for="input-query">Natural Language Query (Simulate Chat / PII Scrubbing)</label>
-                    <textarea id="input-query" placeholder="e.g. My name is John Doe (john@gmail.com). Show me the way to Section 101, avoiding stairs."></textarea>
+                    <label for="input-query">Natural Language Query <span class="sr-only">(optional, for PII scrubbing demonstration)</span></label>
+                    <textarea id="input-query" placeholder="e.g. My name is John Doe (john@gmail.com). Show me the way to Section 101, avoiding stairs." aria-describedby="query-hint" maxlength="400"></textarea>
+                    <span id="query-hint" class="sr-only">Any personal information entered here will be automatically redacted before processing.</span>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-full">Generate Agent Route</button>
+                <button type="submit" class="btn btn-primary btn-full" id="btn-submit-route" aria-describedby="submit-hint">
+                    Generate Agent Route
+                </button>
+                <span id="submit-hint" class="sr-only">Calculates optimal route using Dijkstra's algorithm with real-time crowd density weighting</span>
             </form>
 
             <!-- Navigation & Security Output -->
-            <div class="wayfinding-output" id="wayfinding-output" style="display: none;">
+            <div class="wayfinding-output" id="wayfinding-output" style="display: none;" aria-live="polite" role="region" aria-label="Route results">
                 <!-- Security Redaction Stats -->
                 <div class="scrub-report" id="scrub-report">
                     <div class="scrub-title">PII Scrubbing Gateway (Privacy Guard)</div>
                     <div class="scrubbed-text" id="scrubbed-text">--</div>
-                    <div class="scrub-metrics" id="scrub-metrics">
+                    <div class="scrub-metrics" id="scrub-metrics" aria-label="Redacted items summary">
                         <span>Redacted:</span>
-                        <span class="badge" id="scrub-names">0 Names</span>
-                        <span class="badge" id="scrub-emails">0 Emails</span>
-                        <span class="badge" id="scrub-phones">0 Phones</span>
+                        <span class="badge" id="scrub-names" aria-live="polite">0 Names</span>
+                        <span class="badge" id="scrub-emails" aria-live="polite">0 Emails</span>
+                        <span class="badge" id="scrub-phones" aria-live="polite">0 Phones</span>
                     </div>
                 </div>
 
                 <!-- Cache Performance Metric -->
-                <div class="cache-report" id="cache-report">
-                    <div class="cache-badge" id="cache-badge">CACHE MISS</div>
-                    <div>Query Similarity: <span id="cache-similarity">--</span></div>
-                    <div>Latency: <span id="cache-latency">-- ms</span></div>
+                <div class="cache-report" id="cache-report" aria-label="Cache performance details">
+                    <div class="cache-badge" id="cache-badge" role="status">CACHE MISS</div>
+                    <div>Query Similarity: <span id="cache-similarity" aria-live="polite">--</span></div>
+                    <div>Latency: <span id="cache-latency" aria-live="polite">-- ms</span></div>
                 </div>
 
                 <!-- Navigation Details -->
-                <div class="navigation-details">
+                <div class="navigation-details" role="region" aria-labelledby="route-profile">
                     <div class="nav-header-row">
-                        <span class="profile-tag" id="route-profile">Standard Route</span>
-                        <span class="carbon-tag" id="route-carbon">0g CO2</span>
+                        <span class="profile-tag" id="route-profile" aria-live="polite">Standard Route</span>
+                        <span class="carbon-tag" id="route-carbon" aria-live="polite" aria-label="Estimated carbon footprint">0g CO2</span>
                     </div>
                     <div class="nav-stats">
-                        <div>Distance: <strong id="route-dist">0m</strong></div>
-                        <div>Estimated Time: <strong id="route-time">0 mins</strong></div>
+                        <div>Distance: <strong id="route-dist" aria-live="polite">0m</strong></div>
+                        <div>Estimated Time: <strong id="route-time" aria-live="polite">0 mins</strong></div>
                     </div>
                     
                     <div class="nav-steps">
                         <h4>Step-by-Step Directions</h4>
-                        <ol id="route-steps-list">
+                        <ol id="route-steps-list" aria-label="Turn-by-turn navigation steps">
                             <li>--</li>
                         </ol>
                     </div>
                 </div>
             </div>
-            <div class="output-placeholder" id="output-placeholder">
+            <div class="output-placeholder" id="output-placeholder" aria-live="polite">
                 Enter your start, end locations, and query text to visualize routing decisions.
             </div>
         </section>
     </main>
 
     <!-- FOOTER: Telemetry JSON Event Stream Log -->
-    <footer class="dashboard-footer">
-        <div class="footer-title">
+    <footer class="dashboard-footer" role="contentinfo">
+        <div class="footer-title" aria-hidden="true">
             <span>REAL-TIME TELEMETRY HARDWARE DATA INGESTION SIMULATOR</span>
-            <span class="pulse-dot"></span>
+            <span class="pulse-dot" aria-hidden="true"></span>
         </div>
-        <div class="telemetry-logs" id="telemetry-logs">
+        <div class="telemetry-logs" id="telemetry-logs" role="log" aria-live="off" aria-label="Telemetry event stream" aria-relevant="additions">
             <div class="log-line system">[SYSTEM] Awaiting live telemetry inputs from FastAPI core background loop...</div>
         </div>
     </footer>
